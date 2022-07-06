@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import { createToDo } from '../../helpers/todos'
+import { createToDo } from '../../bussinessLogic/todos'
 import { getUserId } from '../utils'
 
 export const handler = middy(

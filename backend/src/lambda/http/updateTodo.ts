@@ -5,7 +5,7 @@ import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
-import { updateToDo } from '../../helpers/todos'
+import { updateToDo } from '../../bussinessLogic/todos'
 import { getUserId } from '../utils'
 
 export const handler = middy(

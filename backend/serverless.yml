@@ -198,13 +198,23 @@ resources:
             AttributeType: S
           - AttributeName: userId
             AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
         KeySchema:
-          - AttributeName: todoId
-            KeyType: HASH
           - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
+            KeySchema:
+            - AttributeName: createdAt
+              KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
   #     # TODO: Complete the bucket properties below. 
   #     # Do not forget to add the CorsConfiguration propoerty
     AttachmentsBucket:

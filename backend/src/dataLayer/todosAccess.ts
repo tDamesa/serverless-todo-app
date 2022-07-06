@@ -5,8 +5,6 @@ import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate';
 
-const XAWS = AWSXRay.captureAWS(AWS)
-
 const logger = createLogger('TodosAccess')
 
 // TODO: Implement the dataLayer logic
@@ -16,10 +14,15 @@ export class TodosAccess {
     private readonly todosTable;
 
     constructor() {
-        this.docClient = !process.env.IS_OFFLIN ? new XAWS.DynamoDB.DocumentClient() : new XAWS.DynamoDB.DocumentClient({
-            region: 'localhost',
-            endpoint: 'http://localhost:8000'
-        });
+        if (process.env.IS_OFFLINE) {
+            this.docClient = new AWS.DynamoDB.DocumentClient({
+                region: 'localhost',
+                endpoint: 'http://localhost:8000'
+            })
+        } else {
+            const XAWS = AWSXRay.captureAWS(AWS)
+            this.docClient = new XAWS.DynamoDB.DocumentClient()
+        }
         this.todosTable = process.env.TODOS_TABLE;
     }
 
@@ -34,9 +37,9 @@ export class TodosAccess {
 
     async getTodos(userId: string): Promise<TodoItem[]> {
         const result = await this.docClient
-            .scan({
+            .query({
                 TableName: this.todosTable,
-                FilterExpression: 'userId = :userId',
+                KeyConditionExpression: 'userId = :userId',
                 ExpressionAttributeValues: {
                     ':userId': userId,
                 },
